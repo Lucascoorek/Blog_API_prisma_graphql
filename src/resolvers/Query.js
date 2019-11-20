@@ -22,13 +22,21 @@ const Query = {
   comments(parent, args, { prisma }, info) {
     return prisma.query.comments(null, info);
   },
-  me() {
-    return {
-      name: "LUKASZ",
-      id: "123adc",
-      age: 23,
-      email: "lukasz@gmail.com"
-    };
+  async me(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    const user = await prisma.query.user(
+      {
+        where: {
+          id: userId
+        }
+      },
+      info
+    );
+
+    if (!user) throw new Error("User not found");
+
+    return user;
   },
   async post(parent, args, { prisma, request }, info) {
     const userId = getUserId(request, false);
