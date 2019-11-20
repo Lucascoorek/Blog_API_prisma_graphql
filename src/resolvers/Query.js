@@ -10,18 +10,46 @@ const Query = {
     }
     return prisma.query.users(opArgs, info);
   },
+
   posts(parent, args, { prisma }, info) {
-    const opArgs = {};
+    const opArgs = {
+      where: {
+        published: true
+      }
+    };
     if (args.query) {
-      opArgs.where = {
-        OR: [{ body_contains: args.query }, { title_contains: args.query }]
-      };
+      opArgs.where.OR = [
+        { body_contains: args.query },
+        { title_contains: args.query }
+      ];
     }
     return prisma.query.posts(opArgs, info);
   },
+
+  myPosts(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    const opArgs = {
+      where: {
+        author: {
+          id: userId
+        }
+      }
+    };
+
+    if (args.query) {
+      opArgs.where.OR = [
+        { body_contains: args.query },
+        { title_contains: args.query }
+      ];
+    }
+    return prisma.query.posts(opArgs, info);
+  },
+
   comments(parent, args, { prisma }, info) {
     return prisma.query.comments(null, info);
   },
+
   async me(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
 
@@ -38,6 +66,7 @@ const Query = {
 
     return user;
   },
+
   async post(parent, args, { prisma, request }, info) {
     const userId = getUserId(request, false);
 
