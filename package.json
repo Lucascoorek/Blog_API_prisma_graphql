@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@babel/polyfill": "^7.7.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "bcryptjs": "^2.4.3",
+    "env-cmd": "^10.0.1",
     "graphql": "^14.5.8",
     "graphql-cli": "^3.0.14",
     "graphql-yoga": "^1.18.3",
@@ -18,7 +20,9 @@
     "nodemon": "^1.19.4"
   },
   "scripts": {
-    "start": "nodemon src/index.js --ext js,graphql --exec babel-node",
+    "start": "node dist/index.js",
+    "heroku-postbuild": "babel src --out-dir dist --copy-files",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js --ext js,graphql --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1",
     "get-schema": "graphql get-schema -p prisma"
   },
